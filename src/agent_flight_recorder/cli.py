@@ -15,6 +15,24 @@ from .server import FlightDeckServer
 from .exporter import export_bundle
 
 
+def _default_bind_host() -> str:
+    """Bind address: localhost unless explicitly opted in via $ZOTH_BIND_HOST or
+    $HOST (IP literal only; zsh sets HOST to the hostname) or --host."""
+    import ipaddress, os
+    for var in ("ZOTH_BIND_HOST", "HOST"):
+        val = os.environ.get(var, "").strip()
+        if val == "localhost":
+            return "127.0.0.1"
+        if val:
+            try:
+                ipaddress.ip_address(val)
+                return val
+            except ValueError:
+                pass
+    return "127.0.0.1"
+
+
+
 def cmd_record(args: argparse.Namespace):
     cmd = args.command
     if not cmd and args.cmd_remainder:
@@ -45,12 +63,13 @@ def cmd_record(args: argparse.Namespace):
 def cmd_serve(args: argparse.Namespace):
     port = args.port
     storage = FlightStorage(db_path=args.db)
-    server = FlightDeckServer(host="0.0.0.0", port=port, storage=storage)
+    host = getattr(args, "host", None) or _default_bind_host()
+    server = FlightDeckServer(host=host, port=port, storage=storage)
 
     print("=" * 70)
     print("  AGENT FLIGHT RECORDER • TIME-SCRUBBING COCKPIT")
-    print(f"  Forensic Flight Deck UI: http://0.0.0.0:{port}/")
-    print(f"  Event Ingestion API:     http://0.0.0.0:{port}/api/ingest")
+    print(f"  Forensic Flight Deck UI: http://{host}:{port}/")
+    print(f"  Event Ingestion API:     http://{host}:{port}/api/ingest")
     print(f"  Database Storage:        {args.db}")
     print("=" * 70)
     print("Press Ctrl+C to stop flight deck.")
@@ -126,6 +145,7 @@ def main():
 
     # serve
     p_srv = subparsers.add_parser("serve", help="Launch Time-Scrubbing Flight Deck UI")
+    p_srv.add_argument("--host", default=None, help="Host interface (default: 127.0.0.1 or $ZOTH_BIND_HOST; use 0.0.0.0 only on trusted networks)")
     p_srv.add_argument("--port", type=int, default=8104, help="Flight deck port (default: 8104)")
     p_srv.add_argument("--db", default="flight_recorder.db", help="SQLite database path")
     p_srv.set_defaults(func=cmd_serve)

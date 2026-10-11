@@ -309,7 +309,7 @@ class FlightDeckRequestHandler(BaseHTTPRequestHandler):
 
 
 class FlightDeckServer:
-    def __init__(self, host: str = "0.0.0.0", port: int = 8104, storage: Optional[FlightStorage] = None):
+    def __init__(self, host: str = "127.0.0.1", port: int = 8104, storage: Optional[FlightStorage] = None):
         self.host = host
         self.port = port
         self.storage = storage or FlightStorage()
