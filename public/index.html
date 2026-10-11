@@ -6,17 +6,23 @@
   <title>Agent Flight Recorder • Black Box Time-Scrubbing Telemetry Forensics Hub</title>
   <meta name="description" content="Autonomous, zero-dependency Black Box Flight Recorder & Time-Scrubbing Telemetry Forensics Hub for AI agents. Replay execution second-by-second with terminal sync, network graph, and engrams.">
   <link rel="canonical" href="https://flight.nullai.tech/">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon.png">
+  <link rel="apple-touch-icon" href="/assets/icon.png">
 
   <!-- Social & OpenGraph Meta -->
   <meta property="og:title" content="Agent Flight Recorder • Black Box Time-Scrubbing Telemetry Forensics Hub">
   <meta property="og:description" content="Autonomous Black Box Flight Recorder for AI agents. Replay execution second-by-second with synchronized terminal stream, egress graph, and memory engrams.">
   <meta property="og:url" content="https://flight.nullai.tech/">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="https://flight.nullai.tech/assets/og-flight-recorder.png">
+  <meta property="og:image" content="https://flight.nullai.tech/assets/banner.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@1nc0gn30">
   <meta name="twitter:creator" content="@1nc0gn30">
-  <meta name="twitter:image" content="https://flight.nullai.tech/assets/og-flight-recorder.png">
+  <meta name="twitter:image" content="https://flight.nullai.tech/assets/banner.png">
+
+  <!-- DePay Web3 Payments Integration -->
+  <script src="https://integrate.depay.com"></script>
 
   <!-- Typography Pairing -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -911,13 +917,7 @@
     <div class="container">
       <div class="nav-inner">
         <a href="/" class="brand" aria-label="Agent Flight Recorder Home">
-          <div class="brand-icon" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Flight Box Icon">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-              <line x1="8" y1="21" x2="16" y2="21"/>
-              <line x1="12" y1="17" x2="12" y2="21"/>
-            </svg>
-          </div>
+          <img src="/assets/icon.png" alt="Agent Flight Recorder Cryptographic Black Box Logo" width="36" height="36" style="border-radius: 8px; border: 1px solid var(--gold); box-shadow: 0 0 10px var(--gold-glow); object-fit: cover;">
           <div>
             <div class="brand-title">AGENT FLIGHT RECORDER</div>
             <div style="font-size: 0.72rem; color: var(--telemetry-blue); font-family: var(--font-mono);">v0.1.0 • Black Box Telemetry Cockpit</div>
@@ -925,8 +925,8 @@
         </a>
 
         <div class="header-actions">
-          <span id="proStatusBadge" class="badge-free">⚡ FREE TIER</span>
-          <button class="btn btn-gold open-pro-modal" aria-label="Upgrade to Pro License">Upgrade Pro</button>
+          <span id="pro-badge" class="badge-free">⚡ FREE TIER</span>
+          <button class="btn btn-gold open-pro-modal" id="btnHeaderUpgrade" aria-label="Upgrade to Pro License">Upgrade Pro</button>
         </div>
       </div>
     </div>
@@ -946,11 +946,14 @@
           </div>
         </div>
         <div class="banner-ctas">
-          <a href="https://buy.stripe.com/7sI7sA8hM2X8eFG8ww" target="_blank" rel="noopener noreferrer" class="btn btn-gold" aria-label="Instant Stripe Checkout">
+          <a href="https://buy.stripe.com/7sI7sA8hM2X8eFG8ww" target="_blank" rel="noopener noreferrer" class="btn btn-gold" id="btnStripeBanner" aria-label="Instant Stripe Checkout">
             Stripe Checkout ($19)
           </a>
-          <button class="btn btn-outline open-pro-modal" aria-label="Activate with Solana or License Key">
-            Solana / Key
+          <button class="btn btn-cyan btn-depay-solana" id="btnSolanaBanner" aria-label="Solana Web3 Checkout">
+            Solana (SOL)
+          </button>
+          <button class="btn btn-outline open-pro-modal" id="btnActivateBanner" aria-label="Activate with Solana or License Key">
+            Activate Key
           </button>
         </div>
       </div>
@@ -1135,7 +1138,7 @@
               <div style="font-size: 0.8rem; color: var(--text-muted);">Automated attribution linking exceptions directly to prompt injections or network timeouts.</div>
             </div>
           </div>
-          <button class="btn btn-gold" aria-label="Export Single File Flight Bundle">Export Standalone Incident Bundle</button>
+          <button class="btn btn-gold" id="btnExportStandalone" aria-label="Export Single File Flight Bundle">Export Standalone Incident Bundle</button>
         </div>
 
         <!-- Glowing Lock Overlay -->
@@ -1147,11 +1150,14 @@
               Unlock Standalone Single-File Incident Bundles, Deep-Dive AST Diffs, and Unlimited Black Box Telemetry exports with permanent founding access.
             </p>
             <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-              <a href="https://buy.stripe.com/7sI7sA8hM2X8eFG8ww" target="_blank" rel="noopener noreferrer" class="btn btn-gold" aria-label="Unlock via Stripe">
+              <a href="https://buy.stripe.com/7sI7sA8hM2X8eFG8ww" target="_blank" rel="noopener noreferrer" class="btn btn-gold" id="btnStripeOverlay" aria-label="Unlock via Stripe">
                 Unlock via Stripe ($19)
               </a>
-              <button class="btn btn-outline open-pro-modal" aria-label="Activate with Key or Solana">
-                Solana DePay / Key
+              <button class="btn btn-cyan btn-depay-solana" id="btnSolanaOverlay" aria-label="Solana Web3 Checkout">
+                Solana (SOL)
+              </button>
+              <button class="btn btn-outline open-pro-modal" id="btnKeyOverlay" aria-label="Activate with Key">
+                Activate Key
               </button>
             </div>
           </div>
@@ -1172,26 +1178,27 @@
       </p>
 
       <ul class="modal-features">
-        <li><span>✅</span> Unlimited Session Timelines & Zero-Server HTML Exports</li>
-        <li><span>✅</span> Deep-Dive Post-Mortem Root Cause Analysis</li>
-        <li><span>✅</span> Kokoro Audio Briefing Voice Synthesis Engine</li>
-        <li><span>✅</span> Full Sovereign Defense Chain Integration (Ports 8094-8104)</li>
-        <li><span>✅</span> Lifetime Access & CI/CD Forensic Ingestion</li>
+        <li><span>✅</span> <strong>Zero-Server HTML Bundles:</strong> Standalone single-file incident players with embedded JSON</li>
+        <li><span>✅</span> <strong>Deep-Dive Root Cause Analysis:</strong> Automated attribution linking faults to prompts or network</li>
+        <li><span>✅</span> <strong>Sub-Millisecond AST Diffs:</strong> Inspect memory mutations and byte-level diffs at exact offsets</li>
+        <li><span>✅</span> <strong>Kokoro Audio Briefings:</strong> In-browser voice incident briefings optimized for loopback port 9394</li>
+        <li><span>✅</span> <strong>Sovereign Defense Chain:</strong> Seamless integration across ports 8094-8106 (Jail, Policy, Sentinel)</li>
+        <li><span>✅</span> <strong>Permanent Lifetime Access:</strong> All future forensic modules, CI/CD telemetry ingest, and updates</li>
       </ul>
 
       <div style="display: flex; gap: 10px; margin: 1.25rem 0;">
-        <a href="https://buy.stripe.com/7sI7sA8hM2X8eFG8ww" target="_blank" rel="noopener noreferrer" class="btn btn-gold" style="flex: 1;" aria-label="Stripe Checkout Button">
+        <a href="https://buy.stripe.com/7sI7sA8hM2X8eFG8ww" target="_blank" rel="noopener noreferrer" class="btn btn-gold" id="btnStripeModal" style="flex: 1;" aria-label="Stripe Checkout Button">
           Stripe ($19 Lifetime)
         </a>
-        <a href="https://depay.com/pay?integration=428790dd-7ad1-407c-8ecf-c048c77a4cb8&receiver=GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK&amount=19" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="flex: 1;" aria-label="Solana DePay Checkout">
+        <button class="btn btn-outline btn-depay-solana" id="btnModalSolana" style="flex: 1;" aria-label="Solana DePay Checkout">
           Solana DePay (SOL)
-        </a>
+        </button>
       </div>
 
       <div style="border-top: 1px solid var(--border); padding-top: 1rem;">
         <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">Already have a license or receipt key?</div>
         <div class="modal-input-group">
-          <input type="text" id="licenseKeyInput" class="modal-input" placeholder="Enter key (e.g. FLT-PRO-xxxx)" aria-label="License Key Input">
+          <input type="text" id="licenseKeyInput" class="modal-input" placeholder="Enter key (e.g. FLIGHT-PRO-2026)" aria-label="License Key Input">
           <button id="btnActivateKey" class="btn btn-gold" aria-label="Activate License Key">Activate</button>
         </div>
         <div id="activationMsg" style="font-size: 0.78rem; font-family: var(--font-mono);"></div>
