@@ -1,3 +1,9 @@
+<div align="center">
+  <img src="assets/hero-banner.svg" alt="Agent Flight Recorder — Sovereign Architecture Banner" width="100%" />
+</div>
+
+<br />
+
 # Agent Flight Recorder
 
 [![Zero External Dependencies](https://img.shields.io/badge/dependencies-0%20external%20pip-gold.svg)](pyproject.toml)
