@@ -9,7 +9,7 @@
 
   // State
   const state = {
-    isPro: false,
+    isPro: true,
     currentSessionId: null,
     sessions: [],
     timelineEvents: [],
@@ -105,25 +105,17 @@
     const paywallCard = document.getElementById('proLockedSection');
     const lockOverlay = document.getElementById('forensicsLockOverlay');
 
-    if (state.isPro) {
-      badges.forEach(badge => {
-        badge.innerHTML = '⭐ PRO ACTIVE';
-        badge.classList.remove('badge-free');
-        badge.classList.add('badge-pro');
-      });
-      if (paywallBanner) paywallBanner.style.display = 'none';
-      if (paywallCard) paywallCard.classList.remove('frosted-locked');
-      if (lockOverlay) lockOverlay.style.display = 'none';
-    } else {
-      badges.forEach(badge => {
-        badge.innerHTML = '⚡ FREE TIER';
-        badge.classList.add('badge-free');
-        badge.classList.remove('badge-pro');
-      });
-      if (paywallBanner) paywallBanner.style.display = 'block';
-      if (paywallCard) paywallCard.classList.add('frosted-locked');
-      if (lockOverlay) lockOverlay.style.display = 'flex';
-    }
+    badges.forEach(badge => {
+      badge.innerHTML = '✦ 100% FREE & OPEN ACCESS';
+      badge.classList.remove('badge-free');
+      badge.classList.add('badge-pro');
+      badge.style.background = 'rgba(16,185,129,0.15)';
+      badge.style.color = '#10B981';
+      badge.style.border = '1px solid rgba(16,185,129,0.3)';
+    });
+    if (paywallBanner) paywallBanner.style.display = 'none';
+    if (paywallCard) paywallCard.classList.remove('frosted-locked');
+    if (lockOverlay) lockOverlay.style.display = 'none';
   }
 
   // Check if running on local backend port 8104 vs static hosting / test runner
@@ -309,7 +301,7 @@
 
   function escapeHtml(str) {
     if (!str) return '';
-    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    return str.replace(/&/g, "&").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
   }
 
   // --- Playback Controls ---
@@ -569,37 +561,26 @@ pre { background: #000; border: 1px solid #272733; padding: 1rem; border-radius:
     exportBtns.forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
-        if (!state.isPro) {
-          if (modal) modal.style.display = 'flex';
-        } else {
-          downloadOfflineBundle();
-        }
+        downloadOfflineBundle();
       });
     });
 
-    // DePay Solana Web3 Checkout
+    // Solana Tip Address Handler
     const depayBtns = document.querySelectorAll('.btn-depay-solana');
     depayBtns.forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
-        if (window.DePay && window.DePay.Payment) {
-          try {
-            window.DePay.Payment({
-              accept: [
-                {
-                  blockchain: 'solana',
-                  token: '11111111111111111111111111111111',
-                  receiver: 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK',
-                  amount: 19
-                }
-              ]
-            });
-            return;
-          } catch (err) {
-            console.warn('DePay widget fallback:', err);
-          }
+        const address = 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK';
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(address).then(() => {
+            btn.innerText = 'Copied SOL Address! ✓';
+            setTimeout(() => { btn.innerText = 'Solana (SOL)'; }, 2000);
+          }).catch(() => {
+            prompt('Copy Solana Tip Address:', address);
+          });
+        } else {
+          prompt('Copy Solana Tip Address:', address);
         }
-        window.open('https://depay.com/pay?integration=428790dd-7ad1-407c-8ecf-c048c77a4cb8&receiver=GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK&amount=19', '_blank');
       });
     });
   }
