@@ -138,5 +138,5 @@ The server binds to `127.0.0.1` by default. To reach it from other devices, opt 
 
 ## 📜 Attribution & License
 
-- **Engineered by**: Neal Frazier Tech ([@1nc0gn30](https://github.com/1nc0gn30)) • [NullAI Platform](https://nullai.tech)
+- **Engineered by**: 1nc0gn30 • NullAI ([@1nc0gn30](https://github.com/1nc0gn30)) • [NullAI Platform](https://nullai.tech)
 - **License**: MIT License

@@ -554,6 +554,7 @@ pre { background: #000; border: 1px solid #272733; padding: 1rem; border-radius:
 
     // Action Interceptors: Export Buttons
     const exportBtns = [
+      document.getElementById('btnHeroExport'),
       document.getElementById('btnExportBundle'),
       document.getElementById('btnExportStandalone')
     ].filter(Boolean);
@@ -566,8 +567,8 @@ pre { background: #000; border: 1px solid #272733; padding: 1rem; border-radius:
     });
 
     // Solana Tip Address Handler
-    const depayBtns = document.querySelectorAll('.btn-depay-solana');
-    depayBtns.forEach(btn => {
+    const solana_tipBtns = document.querySelectorAll('.btn-solana_tip-solana');
+    solana_tipBtns.forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         const address = 'GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK';
