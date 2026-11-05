@@ -1192,5 +1192,37 @@
 
   <script src="/flight_deck.js"></script>
   <script src="/assets/sovereign-upgrade.js" defer></script>
+
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function() {
+      if (window.createSovereignTutorial) {
+        window.createSovereignTutorial({
+          toolId: "agent-flight-recorder",
+          toolName: "Agent Flight Recorder",
+          tagline: "The black box recorder for autonomous AI agent decisions and tools!",
+          accentColor: "#8B5CF6",
+          steps: [
+            {
+              icon: "✈️",
+              title: "What is an Agent Black Box?",
+              desc: "Just like an airplane flight recorder, this tool records every single thought, prompt, and tool-call an AI makes so you can rewind and see what happened if something goes wrong."
+            },
+            {
+              icon: "📼",
+              title: "Time-Travel Replay",
+              desc: "Scrub backwards through the interactive timeline to inspect inputs, outputs, and reasoning steps step-by-step."
+            },
+            {
+              icon: "🔍",
+              title: "Drift & Hallucination Audit",
+              desc: "Quickly detect when an agent wandered off topic or started guessing false facts instead of executing its mission."
+            }
+          ]
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>
