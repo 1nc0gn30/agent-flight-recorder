@@ -105,13 +105,41 @@ def cmd_export(args: argparse.Namespace):
 
 
 def cmd_status(args: argparse.Namespace):
+    import json
+    import urllib.request
+
+    port = getattr(args, "port", 8104)
+    as_json = bool(getattr(args, "json", False))
+    live_health = None
+    live_stats = None
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=2.0) as resp:
+            live_health = json.loads(resp.read().decode("utf-8"))
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/stats", timeout=2.0) as resp:
+            live_stats = json.loads(resp.read().decode("utf-8"))
+    except Exception:
+        pass
+
     storage = FlightStorage(db_path=args.db)
-    stats = storage.get_db_stats()
+    stats = live_stats if live_stats is not None else storage.get_db_stats()
     sessions = storage.get_sessions(limit=5)
+
+    if as_json:
+        print(json.dumps({
+            "service": "agent-flight-recorder",
+            "version": "2.5.0",
+            "online": live_health is not None,
+            "port": port,
+            "health": live_health,
+            "stats": stats,
+            "recent_sessions": sessions,
+        }, indent=2))
+        return
 
     print("=" * 66)
     print("  AGENT FLIGHT RECORDER • BLACK BOX TELEMETRY STATUS")
     print("=" * 66)
+    print(f"  Daemon Endpoint:         http://127.0.0.1:{port} ({'ONLINE' if live_health else 'LOCAL DB'})")
     print(f"  Total Recorded Sessions: {stats['total_sessions']}")
     print(f"  Total Forensic Events:   {stats['total_events']}")
     print(f"  Total Recorded Flight:   {stats['total_recorded_duration_s']}s")
@@ -132,7 +160,12 @@ def main():
         prog="agent-flight",
         description="Autonomous Black Box Flight Recorder & Time-Scrubbing Telemetry Forensics Hub"
     )
-    subparsers = parser.add_subparsers(dest="subcommand", required=True)
+    parser.add_argument("-v", "--version", action="version", version="agent-flight-recorder 2.5.0")
+    parser.add_argument("--status", action="store_true", help="Summarize flight telemetry storage and daemon status")
+    parser.add_argument("--json", action="store_true", help="Emit telemetry as JSON")
+    parser.add_argument("--port", type=int, default=8104, help="Flight deck port (default: 8104)")
+    parser.add_argument("--db", default="flight_recorder.db", help="SQLite database path")
+    subparsers = parser.add_subparsers(dest="subcommand", required=False)
 
     # record
     p_rec = subparsers.add_parser("record", help="Record an agent execution session")
@@ -160,9 +193,17 @@ def main():
     # status
     p_stat = subparsers.add_parser("status", help="Summarize flight telemetry storage")
     p_stat.add_argument("--db", default="flight_recorder.db", help="SQLite database path")
+    p_stat.add_argument("--port", type=int, default=8104, help="Flight deck port (default: 8104)")
+    p_stat.add_argument("--json", action="store_true", help="Emit telemetry as JSON")
     p_stat.set_defaults(func=cmd_status)
 
     parsed = parser.parse_args()
+    if getattr(parsed, "status", False) or (getattr(parsed, "json", False) and not parsed.subcommand):
+        cmd_status(parsed)
+        return
+    if not parsed.subcommand:
+        parser.print_help()
+        return
     if hasattr(parsed, "cmd_remainder") and parsed.cmd_remainder and parsed.cmd_remainder[0] == "--":
         parsed.cmd_remainder = parsed.cmd_remainder[1:]
 

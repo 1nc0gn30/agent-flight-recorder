@@ -1,10 +1,13 @@
 {
   "name": "agent-flight-recorder",
   "version": "2.5.0",
-  "description": "Black box flight recorder & time-scrubbing telemetry forensics hub for AI agents with dual Stripe + Solana checkout rails.",
+  "description": "Black-box flight recorder and time-scrubbing telemetry forensics hub for AI agents.",
   "scripts": {
-    "serve": "python3 -m http.server 8104 --directory public"
+    "start": "python3 server.py --port 8104",
+    "serve": "python3 server.py --port 8104",
+    "serve:public": "python3 -m http.server 8104 --directory public",
+    "test": "PYTHONPATH=src python3 -m pytest -q tests"
   },
-  "author": "1nc0gn30 (@1nc0gn30)",
+  "author": "1nc0gn30 (@1nc0gn30) • NullAI",
   "license": "MIT"
 }
