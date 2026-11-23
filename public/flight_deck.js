@@ -57,65 +57,16 @@
     return String(m).padStart(2, '0') + ':' + String(s).padStart(6, '0');
   }
 
-  // --- License Management ---
-  function checkLicense() {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('licensed') === 'true' || urlParams.get('pro') === 'true' || urlParams.get('session_id')) {
-      localStorage.setItem('agent_flight_pro', 'true');
-      localStorage.setItem('zoth_flight_licensed', 'true');
-      localStorage.setItem('pro_licensed', 'true');
-      const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-      window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
-    }
-    state.isPro = (
-      localStorage.getItem('agent_flight_pro') === 'true' ||
-      localStorage.getItem('zoth_flight_licensed') === 'true' ||
-      localStorage.getItem('pro_licensed') === 'true'
-    );
-    updateProUI();
-  }
-
-  function activateKey(key) {
-    if (!key || key.trim().length < 4) return false;
-    localStorage.setItem('agent_flight_pro', 'true');
-    localStorage.setItem('zoth_flight_licensed', 'true');
-    localStorage.setItem('pro_licensed', 'true');
+  // --- Open-Access UI State ---
+  function initOpenAccessUI() {
     state.isPro = true;
-    updateProUI();
-    return true;
-  }
-
-  window.activateLicenseKey = function(key) {
-    const k = (typeof key === 'string' && key) ? key : (document.getElementById('licenseKeyInput')?.value || '');
-    return activateKey(k);
-  };
-
-  window.openLicenseModal = function() {
-    const modal = document.getElementById('proModal');
-    if (modal) modal.style.display = 'flex';
-  };
-
-  function updateProUI() {
-    const badges = [
-      document.getElementById('licenseBadge'),
-      document.getElementById('pro-badge'),
-      document.getElementById('proStatusBadge')
-    ].filter(Boolean);
-    const paywallBanner = document.getElementById('salesBanner') || document.getElementById('paywallBanner');
-    const paywallCard = document.getElementById('proLockedSection');
-    const lockOverlay = document.getElementById('forensicsLockOverlay');
-
-    badges.forEach(badge => {
+    const badge = document.getElementById('licenseBadge');
+    if (badge) {
       badge.innerHTML = '✦ 100% FREE & OPEN ACCESS';
-      badge.classList.remove('badge-free');
-      badge.classList.add('badge-pro');
       badge.style.background = 'rgba(16,185,129,0.15)';
       badge.style.color = '#10B981';
       badge.style.border = '1px solid rgba(16,185,129,0.3)';
-    });
-    if (paywallBanner) paywallBanner.style.display = 'none';
-    if (paywallCard) paywallCard.classList.remove('frosted-locked');
-    if (lockOverlay) lockOverlay.style.display = 'none';
+    }
   }
 
   // Check if running on local backend port 8104 vs static hosting / test runner
@@ -470,7 +421,7 @@
       session: activeSession,
       events: state.timelineEvents,
       exported_at: new Date().toISOString(),
-      generator: "Agent Flight Recorder Pro (v0.1.0)"
+      generator: "Agent Flight Recorder (v0.1.0)"
     };
     const htmlContent = `<!DOCTYPE html>
 <html lang="en">
@@ -509,50 +460,9 @@ pre { background: #000; border: 1px solid #272733; padding: 1rem; border-radius:
     URL.revokeObjectURL(url);
   }
 
-  // --- Modals & Export ---
+  // --- Export & Support Controls ---
   function initModals() {
-    const modal = document.getElementById('proModal');
-    const openBtns = document.querySelectorAll('.open-pro-modal');
-    const closeBtn = document.getElementById('closeProModal');
-    const btnActivate = document.getElementById('btnActivateKey');
-    const inputKey = document.getElementById('licenseKeyInput');
-    const msg = document.getElementById('activationMsg');
-
-    openBtns.forEach(b => {
-      b.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (modal) modal.style.display = 'flex';
-      });
-    });
-
-    if (closeBtn && modal) {
-      closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
-    }
-
-    if (modal) {
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) modal.style.display = 'none';
-      });
-    }
-
-    if (btnActivate && inputKey) {
-      btnActivate.addEventListener('click', () => {
-        if (activateKey(inputKey.value)) {
-          if (msg) {
-            msg.innerText = 'License verified! Pro Flight Suite unlocked.';
-            msg.style.color = '#10B981';
-          }
-          setTimeout(() => { if (modal) modal.style.display = 'none'; }, 1000);
-        } else {
-          if (msg) {
-            msg.innerText = 'Invalid license key. Check your Stripe or Solana receipt.';
-            msg.style.color = '#EF4444';
-          }
-        }
-      });
-    }
-
-    // Action Interceptors: Export Buttons
+    // Export Buttons (100% Open Access)
     const exportBtns = [
       document.getElementById('btnHeroExport'),
       document.getElementById('btnExportBundle'),
@@ -588,7 +498,7 @@ pre { background: #000; border: 1px solid #272733; padding: 1rem; border-radius:
 
   // --- Init on DOM Ready ---
   document.addEventListener('DOMContentLoaded', () => {
-    checkLicense();
+    initOpenAccessUI();
     loadSessions();
     initOscilloscopeCanvas();
     initModals();
